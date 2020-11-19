@@ -1,12 +1,12 @@
 // Step 1: Set up our chart
 //= ================================
 var svgWidth = 960;
-var svgHeight = 500;
+var svgHeight = 620;
 
 var margin = {
-  top: 20,
-  right: 40,
-  bottom: 80,
+  top: 100,
+  right: 100,
+  bottom: 100,
   left: 100
 };
 
@@ -17,44 +17,66 @@ var height = svgHeight - margin.top - margin.bottom;
 // append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
 // =================================
-var svg = d3
-  .select("#scatter")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
+var chart = d3.select("#scatter");
+
+//append an svg element to the chart with appropriate height and width
+var svg = chart.append("svg")
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
 
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+var chosenXAxis = "poverty";
+var chosenYAxis = "healthcare";
 
 d3.csv("assets/data/data.csv").then(function(data) {
     // Step 4: Parse the data
     console.log(data);
   // Add X axis
   var x = d3.scaleLinear()
-    .domain([d3.min(data, d => d["age"]) * 0.8,
-        d3.max(data, d => d["age"]) * 1.2
-    ])
+    .domain([8, 22])
     .range([0, width]);
-  svg.append("g")
+  chartGroup.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
   // Add Y axis
   var y = d3.scaleLinear()
-    .domain(0,d3.max(hairData, d => d["smokes"]))
+    .domain([0,26])
     .range([height, 0]);
-  svg.append("g")
+  chartGroup.append("g")
     .call(d3.axisLeft(y));
 
   // Add dots
-  svg.append('g')
+  chartGroup.append('g')
     .selectAll("dot")
     .data(data)
     .enter()
     .append("circle")
-      .attr("cx", function (d) { return x(d.age); } )
-      .attr("cy", function (d) { return y(d.smokes); } )
-      .attr("r", 3)
+      .attr("cx", function (d) { return x(d.poverty); } )
+      .attr("cy", function (d) { return y(d.healthcare); } )
+      .attr("r", 15)
       .style("fill", "#69b3a2")
+      .attr("stroke-width", "1")
+      .classed("stateCircle", true)
+      .attr("opacity", 0.75);
+    
+  chartGroup.append("g")
+    .selectAll('text')
+    .data(data)
+    .enter()
+    .append("text")
+    .text(d=>d.abbr)
+    .attr("x", function (d) { return x(d.poverty); } )
+    .attr("y", function (d) { return y(d.healthcare); } )
+    .classed(".stateText", true)
+    .attr("font-family", "sans-serif")
+    .attr("text-anchor", "middle")
+    .attr("fill", "black")
+    .attr("font-size", "10px")
+    .style("font-weight", "bold")
+    .attr("alignment-baseline", "central");
+
 
 })
