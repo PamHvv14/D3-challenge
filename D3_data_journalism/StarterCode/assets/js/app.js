@@ -48,6 +48,21 @@ d3.csv("assets/data/data.csv").then(function(data) {
   chartGroup.append("g")
     .call(d3.axisLeft(y));
 
+  chartGroup.append("g").append("text")
+    .attr("x", height)
+    .attr("y", 28)
+    .attr("value", "poverty") // value to grab for event listener
+    .text("In Poverty (%)")
+    .classed("active", true);
+
+  chartGroup.append("g").append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -(height / 2))
+    .attr("y", -40)
+    .attr("value", "healthcare") // value to grab for event listener
+    .text("Lacks Healthcare (%)")
+    .classed("active", true);
+
   // Add dots
   chartGroup.append('g')
     .selectAll("dot")
